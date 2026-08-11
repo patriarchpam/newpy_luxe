@@ -34,7 +34,7 @@ export type Service = {
   description: string;
   price: number | "Price available on request";
   duration?: string; // e.g. "2 hours"
-  image?: string; 
+  image?: string;
 };
 
 export const SERVICES: Service[] = [
@@ -140,23 +140,8 @@ export type GalleryImage = {
 
 // Real portfolio images from PY Luxe albums + generated brand imagery
 export const GALLERY: GalleryImage[] = [
-  // Hair (generated)
-  { id: "gal-hair-1", category: "Hair", src: "/images/hair.png", alt: "Elegant Hair Styling" },
-  // Makeup & Eyebrows
-  { id: "gal-makeup-1", category: "Makeup", src: "/images/makeup.png", alt: "Flawless Soft Glam Makeup" },
-  { id: "gal-eyebrows-1", category: "Makeup", src: "/images/eyebrows.png", alt: "Expertly Carved & Shaped Eyebrows" },
-  { id: "gal-makeup-2", category: "Makeup", src: "/images/makeup/makeup-1.jpeg", alt: "Makeup & Eyebrow Styling 1" },
-  { id: "gal-makeup-3", category: "Makeup", src: "/images/makeup/makeup-2.jpeg", alt: "Makeup & Eyebrow Styling 2" },
-  // Henna (real photos)
-  { id: "gal-henna-1", category: "Henna", src: "/images/henna/henna-1.jpeg", alt: "Henna Design 1" },
-  { id: "gal-henna-2", category: "Henna", src: "/images/henna/henna-2.jpeg", alt: "Henna Design 2" },
-  { id: "gal-henna-3", category: "Henna", src: "/images/henna/henna-3.jpeg", alt: "Henna Design 3" },
-  { id: "gal-henna-4", category: "Henna", src: "/images/henna/henna-4.jpeg", alt: "Henna Design 4" },
-  { id: "gal-henna-5", category: "Henna", src: "/images/henna/henna-5.jpeg", alt: "Henna Design 5" },
-  { id: "gal-henna-6", category: "Henna", src: "/images/henna/henna-6.jpeg", alt: "Henna Design 6" },
-  { id: "gal-henna-7", category: "Henna", src: "/images/henna/henna-7.jpeg", alt: "Henna Design 7" },
-  { id: "gal-henna-8", category: "Henna", src: "/images/henna/henna-8.jpeg", alt: "Henna Design 8" },
-  // Nails (real photos)
+
+  // Nails (real photos - placed at the top for maximum visibility)
   { id: "gal-nails-1", category: "Nails", src: "/images/nails/nails-1.jpeg", alt: "Nail Art 1" },
   { id: "gal-nails-2", category: "Nails", src: "/images/nails/nails-2.jpeg", alt: "Nail Art 2" },
   { id: "gal-nails-3", category: "Nails", src: "/images/nails/nails-3.jpeg", alt: "Nail Art 3" },
@@ -191,6 +176,28 @@ export const GALLERY: GalleryImage[] = [
   { id: "gal-nails-32", category: "Nails", src: "/images/nails/nails-32.jpeg", alt: "Nail Art 32" },
   { id: "gal-nails-33", category: "Nails", src: "/images/nails/nails-33.jpeg", alt: "Nail Art 33" },
   { id: "gal-nails-34", category: "Nails", src: "/images/nails/nails-34.jpeg", alt: "Nail Art 34" },
+
+  // Hair
+  { id: "gal-hair-1", category: "Hair", src: "/images/hair.png", alt: "Elegant Hair Styling" },
+
+  // Makeup & Eyebrows
+  { id: "gal-makeup-1", category: "Makeup", src: "/images/makeup.png", alt: "Flawless Soft Glam Makeup" },
+  { id: "gal-eyebrows-1", category: "Makeup", src: "/images/eyebrows.png", alt: "Expertly Carved & Shaped Eyebrows" },
+  { id: "gal-nails-new-1", category: "Nails", src: "/images/nails/new_nails_1.png", alt: "Elegant Nail Art 1" },
+  { id: "gal-nails-new-2", category: "Nails", src: "/images/nails/new_nails_2.png", alt: "Elegant Nail Art 2" },
+  { id: "gal-makeup-4", category: "Makeup", src: "/images/makeup/brows-3.jpeg", alt: "Makeup & Eyebrow Styling 3" },
+  { id: "gal-makeup-5", category: "Makeup", src: "/images/makeup/brows-4.jpeg", alt: "Makeup & Eyebrow Styling 4" },
+  { id: "gal-makeup-6", category: "Makeup", src: "/images/makeup/brows-5.jpeg", alt: "Makeup & Eyebrow Styling 5" },
+
+  // Henna
+  { id: "gal-henna-1", category: "Henna", src: "/images/henna/henna-1.jpeg", alt: "Henna Design 1" },
+  { id: "gal-henna-2", category: "Henna", src: "/images/henna/henna-2.jpeg", alt: "Henna Design 2" },
+  { id: "gal-henna-3", category: "Henna", src: "/images/henna/henna-3.jpeg", alt: "Henna Design 3" },
+  { id: "gal-henna-4", category: "Henna", src: "/images/henna/henna-4.jpeg", alt: "Henna Design 4" },
+  { id: "gal-henna-5", category: "Henna", src: "/images/henna/henna-5.jpeg", alt: "Henna Design 5" },
+  { id: "gal-henna-6", category: "Henna", src: "/images/henna/henna-6.jpeg", alt: "Henna Design 6" },
+  { id: "gal-henna-7", category: "Henna", src: "/images/henna/henna-7.jpeg", alt: "Henna Design 7" },
+  { id: "gal-henna-8", category: "Henna", src: "/images/henna/henna-8.jpeg", alt: "Henna Design 8" },
 ];
 
 export const FAQS = [
