@@ -1,28 +1,30 @@
+import { SectionHeading } from "@/components/ui/SectionHeading";
 import { GalleryClient } from "./GalleryClient";
 
 export const metadata = {
-  title: "Gallery",
-  description: "View our portfolio of stunning hair, nails, makeup, and henna artistry.",
+  title: "Gallery | PY Luxe — Hair, Nails, Makeup & Henna in Abuja",
+  description: "A look at the PY Luxe beauty style — hair, nails, makeup and henna imagery.",
 };
 
 export default function GalleryPage() {
   return (
-    <div className="bg-brand-cream min-h-screen py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        <div className="text-center mb-12">
-          <h1 className="font-playfair font-black text-4xl md:text-5xl text-brand-black mb-4">
-            Our Portfolio
-          </h1>
-          <div className="purple-divider bg-gradient-to-r from-brand-gold to-[#e6c138]" />
-          <p className="text-brand-muted max-w-2xl mx-auto font-inter mt-4">
-            A glimpse into the PY Luxe experience. Filter by category to see our work.
-          </p>
+    <main>
+      <section className="bg-noir px-5 py-14 text-center sm:px-8 sm:py-20">
+        <div className="mx-auto max-w-2xl">
+          <SectionHeading
+            eyebrow="Gallery"
+            title="The PY Luxe look book"
+            subtitle="Explore our real portfolio of client work and brand imagery across hair, nails, makeup and henna."
+            light
+          />
         </div>
+      </section>
 
-        <GalleryClient />
-
-      </div>
-    </div>
+      <section className="bg-white px-5 py-12 sm:px-8 sm:py-16">
+        <div className="mx-auto w-full max-w-6xl">
+          <GalleryClient />
+        </div>
+      </section>
+    </main>
   );
 }

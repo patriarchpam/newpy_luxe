@@ -1,54 +1,70 @@
+import Link from "next/link";
+import { MessageCircle, MapPin, Phone } from "lucide-react";
 import { BRAND } from "@/lib/constants";
 import { whatsappLink } from "@/lib/utils";
-import Link from "next/link";
-import { MessageCircle, Calendar } from "lucide-react";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 
 export const metadata = {
-  title: "Contact Us",
-  description: "Get in touch with PY Luxe to book your next luxury beauty appointment in Abuja.",
+  title: "Contact Us | PY Luxe — Hair, Nails, Makeup & Henna in Abuja",
+  description: "Get in touch with PY Luxe on WhatsApp or book an appointment in Abuja.",
 };
 
 export default function ContactPage() {
+  const generalEnquiry = "Hello PY Luxe! 💕 I'd like to make an enquiry.";
+
   return (
-    <div className="bg-brand-cream min-h-screen py-12 md:py-24 flex items-center">
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        
-        <div className="bg-white rounded-3xl p-8 md:p-12 shadow-luxury text-center border border-brand-gold/20">
-          <h1 className="font-playfair font-black text-4xl md:text-5xl text-brand-black mb-4">
-            {BRAND.name}
-          </h1>
-          <div className="purple-divider bg-gradient-to-r from-brand-gold to-[#e6c138]" />
-          
-          <div className="space-y-4 my-10 font-inter text-lg text-brand-text">
-            <p className="font-semibold">{BRAND.location}</p>
-            <p>Available at {BRAND.primary_service_location}</p>
-            <p>Home service available</p>
-            <p className="text-brand-gold font-semibold pt-4">
-              WhatsApp: {BRAND.display_whatsapp}
+    <main>
+      <section className="bg-noir px-5 py-14 text-center sm:px-8 sm:py-20">
+        <div className="mx-auto max-w-2xl">
+          <SectionHeading
+            eyebrow="Contact"
+            title="Get in touch with PY Luxe"
+            subtitle="Message us directly on WhatsApp to ask a question, check availability, or discuss a custom design."
+            light
+          />
+        </div>
+      </section>
+
+      <section className="bg-white px-5 py-16 sm:px-8 sm:py-24">
+        <div className="mx-auto max-w-3xl rounded-[2rem] border border-black/5 bg-cloud p-8 sm:p-12 shadow-soft text-center">
+          <h2 className="font-serif text-3xl text-ink sm:text-4xl">
+            PY <span className="text-plum-600">Luxe</span>
+          </h2>
+          <p className="mt-2 text-sm uppercase tracking-[0.2em] text-plum-600 font-medium">
+            {BRAND.tagline}
+          </p>
+
+          <div className="mt-8 space-y-4 text-[15px] text-ash">
+            <p className="flex items-center justify-center gap-2">
+              <MapPin size={18} className="text-plum-600 shrink-0" />
+              <span>
+                {BRAND.location} • Available at {BRAND.primary_service_location}
+              </span>
+            </p>
+            <p className="flex items-center justify-center gap-2">
+              <Phone size={18} className="text-plum-600 shrink-0" />
+              <span>WhatsApp: {BRAND.display_whatsapp}</span>
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-12">
+          <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
             <a
-              href={whatsappLink(BRAND.whatsapp, "Hello PY Luxe! 💕 I'd like to make an enquiry.")}
+              href={whatsappLink(BRAND.whatsapp, generalEnquiry)}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full sm:w-auto bg-[#25D366] text-white px-8 py-4 rounded-xl font-bold font-inter text-sm md:text-base hover:bg-[#20b858] transition-colors shadow-lg inline-flex items-center justify-center gap-2"
+              className="inline-flex h-14 items-center justify-center gap-2 rounded-full bg-plum-500 px-8 text-[12px] uppercase tracking-[0.2em] text-white hover:bg-plum-400 font-semibold"
             >
-              <MessageCircle className="w-5 h-5" />
-              CHAT ON WHATSAPP
+              <MessageCircle size={16} /> Chat on WhatsApp
             </a>
             <Link
               href="/booking"
-              className="w-full sm:w-auto bg-brand-black text-white border border-brand-black px-8 py-4 rounded-xl font-bold font-inter text-sm md:text-base hover:bg-zinc-800 transition-colors inline-flex items-center justify-center gap-2"
+              className="inline-flex h-14 items-center justify-center rounded-full border border-ink/20 px-8 text-[12px] uppercase tracking-[0.2em] text-ink hover:border-plum-500 hover:text-plum-600 font-medium"
             >
-              <Calendar className="w-5 h-5" />
-              BOOK AN APPOINTMENT
+              Book an appointment
             </Link>
           </div>
         </div>
-
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }

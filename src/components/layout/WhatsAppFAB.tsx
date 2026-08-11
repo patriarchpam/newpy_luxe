@@ -16,17 +16,13 @@ export function WhatsAppFAB({ phoneNumber }: { phoneNumber?: string }) {
       href={link}
       target="_blank"
       rel="noopener noreferrer"
-      className="fab bg-[#25D366] text-white z-40"
+      aria-label="Chat with PY Luxe on WhatsApp"
+      className="fixed bottom-20 right-4 z-50 inline-flex h-14 w-14 items-center justify-center rounded-full bg-plum-500 text-white shadow-soft ring-1 ring-white/20 transition-transform duration-200 hover:scale-105 hover:bg-plum-400 md:bottom-6 md:right-6"
       initial={{ scale: 0, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
-      transition={{ delay: 1, type: "spring", stiffness: 200 }}
-      whileHover={{ scale: 1.12 }}
-      whileTap={{ scale: 0.95 }}
-      aria-label="Chat on WhatsApp"
-      id="whatsapp-fab"
+      transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
     >
-      <span className="absolute inset-0 rounded-full bg-[#25D366] animate-ping opacity-30" />
-      <MessageCircle className="h-6 w-6 relative z-10" />
+      <MessageCircle size={24} />
     </motion.a>
   );
 }

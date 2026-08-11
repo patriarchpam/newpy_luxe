@@ -1,197 +1,213 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowRight, Check, MessageCircle } from "lucide-react";
 import { BRAND, GALLERY } from "@/lib/constants";
 import { whatsappLink } from "@/lib/utils";
-import { ArrowRight, MessageCircle, CheckCircle2 } from "lucide-react";
+import { SectionHeading } from "@/components/ui/SectionHeading";
+import { FaqAccordion } from "@/components/ui/FaqAccordion";
+import { GalleryClient } from "@/app/gallery/GalleryClient";
 
 export default function HomePage() {
+  const serviceCategories = [
+    { id: "hair", name: "Hair", blurb: "Hair styling and related hair services.", image: "/images/hair.png" },
+    { id: "nails", name: "Nails", blurb: "Nail services and nail art.", image: "/images/nails.png" },
+    { id: "makeup", name: "Makeup", blurb: "Makeup and glam services.", image: "/images/makeup.png" },
+    { id: "henna", name: "Henna", blurb: "Henna artistry and designs.", image: "/images/henna.png" },
+  ];
+
+  const whyPyLuxe = [
+    "Personalized beauty service",
+    "Attention to detail",
+    "Convenient booking",
+    `Available at ${BRAND.primary_service_location}`,
+    "Home service available",
+  ];
+
+  const generalEnquiry = "Hello PY Luxe! 💕 I'd like to make an enquiry.";
+
   return (
-    <div className="flex flex-col min-h-screen">
-      {/* Hero Section */}
-      <section className="relative w-full h-[90vh] min-h-[600px] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="/images/hero.png"
-            alt="PY Luxe Luxury Beauty"
-            fill
-            className="object-cover object-center"
-            priority
-          />
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />
-        </div>
-        
-        <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
-          <h1 className="font-playfair font-black text-5xl md:text-7xl text-white tracking-wider mb-4 drop-shadow-lg">
-            {BRAND.name}
-          </h1>
-          <p className="font-inter font-light text-xl md:text-3xl text-brand-gold mb-6 drop-shadow-md">
-            {BRAND.tagline}
-          </p>
-          <p className="font-inter text-base md:text-lg text-white/90 mb-2">
-            Hair, nails, makeup and henna services in Abuja.
-          </p>
-          <p className="font-inter text-sm md:text-base text-brand-blush mb-10 font-medium">
-            Available at {BRAND.primary_service_location} &bull; Home service available
-          </p>
-          
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              href="/booking"
-              className="w-full sm:w-auto bg-brand-gold text-brand-black px-8 py-4 rounded-xl font-bold font-inter text-sm md:text-base hover:bg-[#e6c138] transition-colors shadow-lg"
-            >
-              BOOK AN APPOINTMENT
-            </Link>
-            <Link
-              href="/services"
-              className="w-full sm:w-auto bg-white/10 backdrop-blur-md text-white border border-white/30 px-8 py-4 rounded-xl font-bold font-inter text-sm md:text-base hover:bg-white/20 transition-colors"
-            >
-              VIEW SERVICES
-            </Link>
-          </div>
-          <div className="mt-6">
+    <main>
+      {/* HERO */}
+      <section className="relative overflow-hidden bg-noir">
+        <div className="mx-auto grid w-full max-w-6xl items-center gap-10 px-5 pb-14 pt-14 sm:px-8 lg:grid-cols-2 lg:gap-14 lg:pb-24 lg:pt-20">
+          <div>
+            <p className="text-[11px] uppercase tracking-luxe text-plum-300">{BRAND.location}</p>
+            <h1 className="mt-4 font-serif text-6xl leading-[0.95] text-white sm:text-7xl lg:text-[86px]">
+              PY <span className="italic text-plum-300">Luxe</span>
+            </h1>
+            <p className="mt-4 text-sm uppercase tracking-[0.3em] text-mist">{BRAND.tagline}</p>
+            <p className="mt-6 max-w-md text-[17px] leading-relaxed text-mist">{BRAND.description}</p>
+
+            <p className="mt-6 inline-flex flex-wrap items-center gap-x-2 rounded-full border border-white/15 px-4 py-2 text-[12px] text-cloud">
+              Available at {BRAND.primary_service_location} <span className="text-plum-300">•</span> Home service available
+            </p>
+
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Link
+                href="/booking"
+                className="inline-flex h-14 items-center justify-center rounded-full bg-plum-500 px-8 text-[12px] uppercase tracking-[0.2em] text-white transition-colors hover:bg-plum-400 font-semibold"
+              >
+                Book an appointment
+              </Link>
+              <Link
+                href="/services"
+                className="inline-flex h-14 items-center justify-center rounded-full border border-white/25 px-8 text-[12px] uppercase tracking-[0.2em] text-white transition-colors hover:border-plum-300 hover:text-plum-200"
+              >
+                View services
+              </Link>
+            </div>
+
             <a
-              href={whatsappLink(BRAND.whatsapp, "Hello PY Luxe! 💕 I'd like to make an enquiry.")}
+              href={whatsappLink(BRAND.whatsapp, generalEnquiry)}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-white/80 hover:text-brand-gold transition-colors font-inter text-sm underline underline-offset-4"
+              className="mt-5 inline-flex items-center gap-2 text-[13px] uppercase tracking-[0.18em] text-plum-200 hover:text-white"
             >
-              <MessageCircle className="w-4 h-4" />
-              Chat with us on WhatsApp
+              <MessageCircle size={16} /> Chat with PY Luxe on WhatsApp
             </a>
           </div>
-        </div>
-      </section>
 
-      {/* Services Categories Section */}
-      <section className="section-padding bg-brand-cream">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="font-playfair font-bold text-4xl text-brand-black mb-4">Our Services</h2>
-            <div className="purple-divider bg-gradient-to-r from-brand-gold to-[#e6c138]" />
-            <p className="text-brand-muted max-w-2xl mx-auto font-inter">
-              Discover our premium beauty treatments designed to make you look and feel your absolute best.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              { title: "Hair", desc: "Expert styling, knotless braids, and flawless wig installations.", img: "/images/hair.png" },
-              { title: "Nails", desc: "Elegant acrylics, gel polish, and custom nail art.", img: "/images/nails.png" },
-              { title: "Makeup", desc: "Soft glam and event makeup for your special occasions.", img: "/images/makeup.png" },
-              { title: "Henna", desc: "Intricate, beautiful henna artistry for hands and feet.", img: "/images/henna.png" },
-            ].map((cat) => (
-              <Link href="/services" key={cat.title} className="group block">
-                <div className="bg-white rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover transition-all duration-300">
-                  <div className="relative h-64 w-full img-zoom-container">
-                    <Image src={cat.img} alt={cat.title} fill className="object-cover" />
-                  </div>
-                  <div className="p-6 text-center">
-                    <h3 className="font-playfair font-bold text-2xl text-brand-black mb-2">{cat.title}</h3>
-                    <p className="text-brand-muted text-sm font-inter">{cat.desc}</p>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Why PY Luxe Section */}
-      <section className="section-padding bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-            <div className="relative h-[500px] w-full rounded-2xl overflow-hidden shadow-luxury-lg">
-              <Image src="/images/hero.png" alt="Why PY Luxe" fill className="object-cover" />
+          <div className="relative">
+            <div className="overflow-hidden rounded-[2rem] shadow-soft ring-1 ring-white/10 relative h-[420px] sm:h-[560px] w-full">
+              <Image
+                src="/images/hero.png"
+                alt="PY Luxe beauty look — braided hair, soft glam makeup and manicured nails"
+                fill
+                className="object-cover"
+                priority
+              />
             </div>
-            <div>
-              <h2 className="font-playfair font-bold text-4xl text-brand-black mb-6">
-                Why PY Luxe?
-              </h2>
-              <div className="purple-divider bg-gradient-to-r from-brand-gold to-[#e6c138] mx-0 mb-8" />
-              
-              <ul className="space-y-6">
-                {[
-                  "Personalized beauty service tailored just for you",
-                  "Meticulous attention to detail and quality",
-                  "Convenient and straightforward booking process",
-                  `Available exclusively at ${BRAND.primary_service_location}`,
-                  "Comfortable home service available upon request"
-                ].map((point, idx) => (
-                  <li key={idx} className="flex items-start gap-4">
-                    <CheckCircle2 className="w-6 h-6 text-brand-gold flex-shrink-0 mt-0.5" />
-                    <span className="font-inter text-brand-text text-lg">{point}</span>
-                  </li>
-                ))}
-              </ul>
+            <div className="pointer-events-none absolute -bottom-4 -left-4 hidden rounded-2xl bg-plum-500 px-6 py-4 text-white sm:block">
+              <p className="font-serif text-xl leading-none">Hair • Nails</p>
+              <p className="font-serif text-xl leading-none">Makeup • Henna</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-              <div className="mt-10">
+      {/* CATEGORIES */}
+      <section className="bg-white px-5 py-16 sm:px-8 sm:py-24">
+        <div className="mx-auto w-full max-w-6xl">
+          <SectionHeading
+            eyebrow="What we do"
+            title="Four ways to feel your best"
+            subtitle="Explore the PY Luxe beauty services and book the one you need."
+          />
+          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {serviceCategories.map((cat) => (
+              <div key={cat.id}>
                 <Link
-                  href="/about"
-                  className="inline-flex items-center gap-2 text-brand-black font-semibold hover:text-brand-gold transition-colors"
+                  href={`/services#${cat.id}`}
+                  className="group block overflow-hidden rounded-3xl border border-black/5 bg-white shadow-soft"
                 >
-                  Learn more about us <ArrowRight className="w-4 h-4" />
+                  <div className="aspect-[4/5] overflow-hidden bg-cloud relative">
+                    <Image
+                      src={cat.image}
+                      alt={cat.name}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                  </div>
+                  <div className="p-5">
+                    <h3 className="font-serif text-2xl text-ink">{cat.name}</h3>
+                    <p className="mt-1.5 text-sm text-ash">{cat.blurb}</p>
+                    <span className="mt-3 inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.18em] text-plum-600">
+                      View <ArrowRight size={13} />
+                    </span>
+                  </div>
                 </Link>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Featured Work */}
-      <section className="section-padding bg-brand-blush/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="font-playfair font-bold text-4xl text-brand-black mb-4">Featured Work</h2>
-            <div className="purple-divider bg-gradient-to-r from-brand-gold to-[#e6c138]" />
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {GALLERY.slice(0, 4).map((img, idx) => (
-              <div key={idx} className="relative aspect-square rounded-xl overflow-hidden shadow-md img-zoom-container">
-                <Image src={img.src} alt={img.alt} fill className="object-cover" />
-              </div>
             ))}
           </div>
+        </div>
+      </section>
 
-          <div className="text-center mt-10">
+      {/* WHY PY LUXE */}
+      <section className="bg-plum-900 px-5 py-16 sm:px-8 sm:py-24">
+        <div className="mx-auto grid w-full max-w-6xl gap-10 lg:grid-cols-2 lg:items-center">
+          <div className="overflow-hidden rounded-[2rem] ring-1 ring-white/10 relative h-[320px] sm:h-[440px] w-full">
+            <Image
+              src="/images/makeup.png"
+              alt="Soft glam makeup by PY Luxe"
+              fill
+              className="object-cover"
+            />
+          </div>
+          <div>
+            <SectionHeading eyebrow="Why PY Luxe" title="Beauty, done with care" align="left" light />
+            <ul className="mt-8 space-y-4">
+              {whyPyLuxe.map((point) => (
+                <li key={point} className="flex items-center gap-3 text-[15px] text-cloud">
+                  <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-plum-500 text-white">
+                    <Check size={14} />
+                  </span>
+                  {point}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* FEATURED WORK */}
+      <section className="bg-white px-5 py-16 sm:px-8 sm:py-24">
+        <div className="mx-auto w-full max-w-6xl">
+          <SectionHeading
+            eyebrow="Featured work"
+            title="A look at the PY Luxe style"
+            subtitle="Explore our real portfolio of nail art and henna designs."
+          />
+          <div className="mt-12">
+            <GalleryClient itemsLimit={9} />
+          </div>
+          <div className="mt-10 text-center">
             <Link
               href="/gallery"
-              className="inline-flex items-center gap-2 bg-white border border-brand-border text-brand-black px-8 py-3 rounded-xl font-medium hover:bg-brand-surface transition-colors"
+              className="inline-flex h-13 items-center justify-center rounded-full border border-ink/20 px-8 py-4 text-[12px] uppercase tracking-[0.2em] text-ink transition-colors hover:border-plum-500 hover:text-plum-600"
             >
-              View Full Gallery
+              View full gallery
             </Link>
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="section-padding bg-brand-black text-white text-center">
-        <div className="max-w-3xl mx-auto px-4">
-          <h2 className="font-playfair font-bold text-4xl md:text-5xl mb-6 text-brand-gold">
-            Ready to Book?
-          </h2>
-          <p className="font-inter text-lg text-white/80 mb-10">
-            Secure your appointment today and let us bring out your confidence and style.
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
+      {/* FAQ */}
+      <section className="bg-cloud px-5 py-16 sm:px-8 sm:py-24">
+        <div className="mx-auto w-full max-w-6xl">
+          <SectionHeading eyebrow="FAQ" title="Good to know" />
+          <div className="mt-10">
+            <FaqAccordion />
+          </div>
+        </div>
+      </section>
+
+      {/* READY TO BOOK */}
+      <section className="bg-noir px-5 py-20 text-center sm:px-8 sm:py-28">
+        <div className="mx-auto w-full max-w-2xl">
+          <SectionHeading
+            eyebrow="Ready to book?"
+            title="Let's get you booked in"
+            subtitle="A ₦1,000 deposit secures your appointment. Send your booking request and PY Luxe will take it from there on WhatsApp."
+            light
+          />
+          <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
             <Link
               href="/booking"
-              className="bg-brand-gold text-brand-black px-8 py-4 rounded-xl font-bold font-inter text-sm md:text-base hover:bg-[#e6c138] transition-colors shadow-lg"
+              className="inline-flex h-14 items-center justify-center rounded-full bg-plum-500 px-8 text-[12px] uppercase tracking-[0.2em] text-white transition-colors hover:bg-plum-400 font-semibold"
             >
-              BOOK AN APPOINTMENT
+              Book an appointment
             </Link>
             <a
-              href={whatsappLink(BRAND.whatsapp, "Hello PY Luxe! 💕 I'd like to chat.")}
+              href={whatsappLink(BRAND.whatsapp, generalEnquiry)}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-white/10 text-white border border-white/20 px-8 py-4 rounded-xl font-bold font-inter text-sm md:text-base hover:bg-white/20 transition-colors inline-flex items-center justify-center gap-2"
+              className="inline-flex h-14 items-center justify-center gap-2 rounded-full border border-white/25 px-8 text-[12px] uppercase tracking-[0.2em] text-white transition-colors hover:border-plum-300 hover:text-plum-200"
             >
-              <MessageCircle className="w-5 h-5" />
-              CHAT WITH PY LUXE
+              <MessageCircle size={16} /> Chat with PY Luxe
             </a>
           </div>
         </div>
       </section>
-    </div>
+    </main>
   );
 }

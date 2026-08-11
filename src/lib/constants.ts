@@ -130,12 +130,56 @@ export type GalleryImage = {
   alt: string;
 };
 
-// Populated with generated brand imagery
+// Real portfolio images from PY Luxe albums + generated brand imagery
 export const GALLERY: GalleryImage[] = [
-  { id: "gal-1", category: "Hair", src: "/images/hair.png", alt: "Elegant Hair Styling" },
-  { id: "gal-2", category: "Nails", src: "/images/nails.png", alt: "Professional Nail Art" },
-  { id: "gal-3", category: "Makeup", src: "/images/makeup.png", alt: "Flawless Soft Glam Makeup" },
-  { id: "gal-4", category: "Henna", src: "/images/henna.png", alt: "Intricate Henna Design" },
+  // Hair (generated)
+  { id: "gal-hair-1", category: "Hair", src: "/images/hair.png", alt: "Elegant Hair Styling" },
+  // Makeup (generated)
+  { id: "gal-makeup-1", category: "Makeup", src: "/images/makeup.png", alt: "Flawless Soft Glam Makeup" },
+  // Henna (real photos)
+  { id: "gal-henna-1", category: "Henna", src: "/images/henna/henna-1.jpeg", alt: "Henna Design 1" },
+  { id: "gal-henna-2", category: "Henna", src: "/images/henna/henna-2.jpeg", alt: "Henna Design 2" },
+  { id: "gal-henna-3", category: "Henna", src: "/images/henna/henna-3.jpeg", alt: "Henna Design 3" },
+  { id: "gal-henna-4", category: "Henna", src: "/images/henna/henna-4.jpeg", alt: "Henna Design 4" },
+  { id: "gal-henna-5", category: "Henna", src: "/images/henna/henna-5.jpeg", alt: "Henna Design 5" },
+  { id: "gal-henna-6", category: "Henna", src: "/images/henna/henna-6.jpeg", alt: "Henna Design 6" },
+  { id: "gal-henna-7", category: "Henna", src: "/images/henna/henna-7.jpeg", alt: "Henna Design 7" },
+  { id: "gal-henna-8", category: "Henna", src: "/images/henna/henna-8.jpeg", alt: "Henna Design 8" },
+  // Nails (real photos)
+  { id: "gal-nails-1", category: "Nails", src: "/images/nails/nails-1.jpeg", alt: "Nail Art 1" },
+  { id: "gal-nails-2", category: "Nails", src: "/images/nails/nails-2.jpeg", alt: "Nail Art 2" },
+  { id: "gal-nails-3", category: "Nails", src: "/images/nails/nails-3.jpeg", alt: "Nail Art 3" },
+  { id: "gal-nails-4", category: "Nails", src: "/images/nails/nails-4.jpeg", alt: "Nail Art 4" },
+  { id: "gal-nails-5", category: "Nails", src: "/images/nails/nails-5.jpeg", alt: "Nail Art 5" },
+  { id: "gal-nails-6", category: "Nails", src: "/images/nails/nails-6.jpeg", alt: "Nail Art 6" },
+  { id: "gal-nails-7", category: "Nails", src: "/images/nails/nails-7.jpeg", alt: "Nail Art 7" },
+  { id: "gal-nails-8", category: "Nails", src: "/images/nails/nails-8.jpeg", alt: "Nail Art 8" },
+  { id: "gal-nails-9", category: "Nails", src: "/images/nails/nails-9.jpeg", alt: "Nail Art 9" },
+  { id: "gal-nails-10", category: "Nails", src: "/images/nails/nails-10.jpeg", alt: "Nail Art 10" },
+  { id: "gal-nails-11", category: "Nails", src: "/images/nails/nails-11.jpeg", alt: "Nail Art 11" },
+  { id: "gal-nails-12", category: "Nails", src: "/images/nails/nails-12.jpeg", alt: "Nail Art 12" },
+  { id: "gal-nails-13", category: "Nails", src: "/images/nails/nails-13.jpeg", alt: "Nail Art 13" },
+  { id: "gal-nails-14", category: "Nails", src: "/images/nails/nails-14.jpeg", alt: "Nail Art 14" },
+  { id: "gal-nails-15", category: "Nails", src: "/images/nails/nails-15.jpeg", alt: "Nail Art 15" },
+  { id: "gal-nails-16", category: "Nails", src: "/images/nails/nails-16.jpeg", alt: "Nail Art 16" },
+  { id: "gal-nails-17", category: "Nails", src: "/images/nails/nails-17.jpeg", alt: "Nail Art 17" },
+  { id: "gal-nails-18", category: "Nails", src: "/images/nails/nails-18.jpeg", alt: "Nail Art 18" },
+  { id: "gal-nails-19", category: "Nails", src: "/images/nails/nails-19.jpeg", alt: "Nail Art 19" },
+  { id: "gal-nails-20", category: "Nails", src: "/images/nails/nails-20.jpeg", alt: "Nail Art 20" },
+  { id: "gal-nails-21", category: "Nails", src: "/images/nails/nails-21.jpeg", alt: "Nail Art 21" },
+  { id: "gal-nails-22", category: "Nails", src: "/images/nails/nails-22.jpeg", alt: "Nail Art 22" },
+  { id: "gal-nails-23", category: "Nails", src: "/images/nails/nails-23.jpeg", alt: "Nail Art 23" },
+  { id: "gal-nails-24", category: "Nails", src: "/images/nails/nails-24.jpeg", alt: "Nail Art 24" },
+  { id: "gal-nails-25", category: "Nails", src: "/images/nails/nails-25.jpeg", alt: "Nail Art 25" },
+  { id: "gal-nails-26", category: "Nails", src: "/images/nails/nails-26.jpeg", alt: "Nail Art 26" },
+  { id: "gal-nails-27", category: "Nails", src: "/images/nails/nails-27.jpeg", alt: "Nail Art 27" },
+  { id: "gal-nails-28", category: "Nails", src: "/images/nails/nails-28.jpeg", alt: "Nail Art 28" },
+  { id: "gal-nails-29", category: "Nails", src: "/images/nails/nails-29.jpeg", alt: "Nail Art 29" },
+  { id: "gal-nails-30", category: "Nails", src: "/images/nails/nails-30.jpeg", alt: "Nail Art 30" },
+  { id: "gal-nails-31", category: "Nails", src: "/images/nails/nails-31.jpeg", alt: "Nail Art 31" },
+  { id: "gal-nails-32", category: "Nails", src: "/images/nails/nails-32.jpeg", alt: "Nail Art 32" },
+  { id: "gal-nails-33", category: "Nails", src: "/images/nails/nails-33.jpeg", alt: "Nail Art 33" },
+  { id: "gal-nails-34", category: "Nails", src: "/images/nails/nails-34.jpeg", alt: "Nail Art 34" },
 ];
 
 export const FAQS = [

@@ -1,51 +1,49 @@
 import { BookingForm } from "./BookingForm";
-import { BRAND, BOOKING_DEPOSIT } from "@/lib/constants";
-import { AlertCircle } from "lucide-react";
+import { SectionHeading } from "@/components/ui/SectionHeading";
+import { BOOKING_DEPOSIT } from "@/lib/constants";
+import { Info } from "lucide-react";
 
 export const metadata = {
-  title: "Book Appointment",
-  description: "Book your luxury beauty appointment with PY Luxe in Abuja.",
+  title: "Book Appointment | PY Luxe — Hair, Nails, Makeup & Henna in Abuja",
+  description: "Book your beauty appointment with PY Luxe in Abuja. A ₦1,000 deposit is required to secure every appointment.",
 };
 
 export default function BookingPage() {
   return (
-    <div className="bg-brand-cream min-h-screen py-12 md:py-20">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        <div className="text-center mb-12">
-          <h1 className="font-playfair font-black text-4xl md:text-5xl text-brand-black mb-4">
-            Book an Appointment
-          </h1>
-          <div className="purple-divider bg-gradient-to-r from-brand-gold to-[#e6c138]" />
-          <p className="text-brand-muted font-inter mt-4">
-            Fill out the form below to request an appointment. You will be redirected to WhatsApp to complete your booking.
-          </p>
+    <main>
+      <section className="bg-noir px-5 py-14 text-center sm:px-8 sm:py-20">
+        <div className="mx-auto max-w-2xl">
+          <SectionHeading
+            eyebrow="Booking"
+            title="Book your appointment"
+            subtitle={`A ${BOOKING_DEPOSIT} deposit is required to secure every appointment. Fill in your details below and PY Luxe will receive your request on WhatsApp.`}
+            light
+          />
         </div>
+      </section>
 
-        {/* Booking Policy Alert */}
-        <div className="bg-brand-blush/40 border border-brand-blush rounded-2xl p-6 mb-10 shadow-sm">
-          <div className="flex items-start gap-4">
-            <AlertCircle className="w-6 h-6 text-brand-gold flex-shrink-0 mt-0.5" />
-            <div>
-              <h3 className="font-playfair font-bold text-lg text-brand-black mb-2">Booking Policy</h3>
-              <p className="font-inter text-sm text-brand-text mb-2">
-                A <strong>{BOOKING_DEPOSIT} deposit</strong> is required to secure every appointment.
-              </p>
-              <p className="font-inter text-sm text-brand-text mb-2">
-                Your appointment is only confirmed after the deposit has been received and verified by {BRAND.name}.
-              </p>
-              <p className="font-inter text-sm text-brand-text">
-                After payment, please send your payment screenshot to our WhatsApp Business number for confirmation.
-              </p>
+      <section className="bg-white px-5 py-16 sm:px-8 sm:py-24">
+        <div className="mx-auto max-w-2xl">
+          {/* Policy Banner */}
+          <div className="mb-10 rounded-2xl border border-plum-200 bg-plum-50 p-6 text-sm text-plum-900">
+            <div className="flex items-start gap-3">
+              <Info size={18} className="mt-0.5 shrink-0 text-plum-600" />
+              <div className="space-y-2">
+                <p className="font-semibold text-plum-800">Important Booking Policy:</p>
+                <ul className="list-disc pl-4 space-y-1 text-ash">
+                  <li>A <strong>{BOOKING_DEPOSIT} deposit</strong> is required to secure every appointment.</li>
+                  <li>Your appointment is only confirmed after the deposit has been received and verified by PY Luxe.</li>
+                  <li>After payment, please send your payment screenshot on WhatsApp for confirmation.</li>
+                </ul>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="bg-white rounded-3xl p-6 md:p-10 shadow-card">
-          <BookingForm />
+          <div className="rounded-[2rem] border border-black/5 bg-cloud p-6 sm:p-10 shadow-soft">
+            <BookingForm />
+          </div>
         </div>
-
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }

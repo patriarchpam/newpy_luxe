@@ -23,7 +23,6 @@ export function BookingForm() {
   const onSubmit = (data: BookingFormData) => {
     setIsSubmitting(true);
     
-    // Find service name from ID if possible, otherwise use the raw value
     const selectedService = SERVICES.find(s => s.id === data.service)?.name || data.service;
 
     const message = `Hello PY Luxe! 💕
@@ -43,21 +42,19 @@ Additional Message: ${data.message || "None"}
 
 Thank you!`;
 
-    // Open WhatsApp
     const url = whatsappLink(BRAND.whatsapp, message);
     window.open(url, "_blank");
     
     setIsSubmitting(false);
   };
 
-  const inputClasses = "w-full px-4 py-3 rounded-xl border border-brand-border focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-transparent font-inter text-brand-black bg-brand-surface";
-  const labelClasses = "block text-sm font-semibold text-brand-black mb-2 font-inter";
+  const inputClasses = "w-full rounded-2xl border border-black/10 bg-white px-4 py-3.5 text-sm text-ink outline-none transition-colors focus:border-plum-500 font-sans";
+  const labelClasses = "block text-xs uppercase tracking-[0.16em] text-ash mb-2 font-medium";
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Full Name */}
         <div>
           <label htmlFor="fullName" className={labelClasses}>Full Name *</label>
           <input
@@ -67,24 +64,22 @@ Thank you!`;
             className={inputClasses}
             {...register("fullName", { required: "Name is required" })}
           />
-          {errors.fullName && <p className="text-red-500 text-xs mt-1 font-inter">{errors.fullName.message}</p>}
+          {errors.fullName && <p className="text-red-500 text-xs mt-1.5">{errors.fullName.message}</p>}
         </div>
 
-        {/* Phone */}
         <div>
           <label htmlFor="phone" className={labelClasses}>Phone Number *</label>
           <input
             id="phone"
             type="tel"
-            placeholder="0800 000 0000"
+            placeholder="070 0000 0000"
             className={inputClasses}
             {...register("phone", { required: "Phone number is required" })}
           />
-          {errors.phone && <p className="text-red-500 text-xs mt-1 font-inter">{errors.phone.message}</p>}
+          {errors.phone && <p className="text-red-500 text-xs mt-1.5">{errors.phone.message}</p>}
         </div>
       </div>
 
-      {/* Service */}
       <div>
         <label htmlFor="service" className={labelClasses}>Select Service *</label>
         <select
@@ -98,11 +93,10 @@ Thank you!`;
             <option key={s.id} value={s.id}>{s.name} - {s.price}</option>
           ))}
         </select>
-        {errors.service && <p className="text-red-500 text-xs mt-1 font-inter">{errors.service.message}</p>}
+        {errors.service && <p className="text-red-500 text-xs mt-1.5">{errors.service.message}</p>}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Date */}
         <div>
           <label htmlFor="date" className={labelClasses}>Preferred Date *</label>
           <input
@@ -112,10 +106,9 @@ Thank you!`;
             className={inputClasses}
             {...register("date", { required: "Date is required" })}
           />
-          {errors.date && <p className="text-red-500 text-xs mt-1 font-inter">{errors.date.message}</p>}
+          {errors.date && <p className="text-red-500 text-xs mt-1.5">{errors.date.message}</p>}
         </div>
 
-        {/* Time */}
         <div>
           <label htmlFor="time" className={labelClasses}>Preferred Time *</label>
           <input
@@ -124,11 +117,10 @@ Thank you!`;
             className={inputClasses}
             {...register("time", { required: "Time is required" })}
           />
-          {errors.time && <p className="text-red-500 text-xs mt-1 font-inter">{errors.time.message}</p>}
+          {errors.time && <p className="text-red-500 text-xs mt-1.5">{errors.time.message}</p>}
         </div>
       </div>
 
-      {/* Location */}
       <div>
         <label htmlFor="location" className={labelClasses}>Location *</label>
         <select
@@ -141,10 +133,9 @@ Thank you!`;
           <option value={BRAND.primary_service_location}>{BRAND.primary_service_location}</option>
           <option value="Home Service">Home Service</option>
         </select>
-        {errors.location && <p className="text-red-500 text-xs mt-1 font-inter">{errors.location.message}</p>}
+        {errors.location && <p className="text-red-500 text-xs mt-1.5">{errors.location.message}</p>}
       </div>
 
-      {/* Message */}
       <div>
         <label htmlFor="message" className={labelClasses}>Additional Message (Optional)</label>
         <textarea
@@ -154,34 +145,29 @@ Thank you!`;
           className={inputClasses}
           {...register("message")}
         />
-        <p className="text-xs text-brand-muted mt-2 font-inter">
-          * Note: You can attach inspiration photos directly in WhatsApp after submitting this form.
-        </p>
       </div>
 
-      {/* Submit */}
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full bg-[#25D366] text-white px-8 py-4 rounded-xl font-bold font-inter text-base hover:bg-[#20b858] transition-colors shadow-lg flex items-center justify-center gap-2 mt-8 disabled:opacity-70"
+        className="w-full h-14 rounded-full bg-plum-500 px-8 text-[12px] uppercase tracking-[0.2em] text-white hover:bg-plum-400 transition-colors font-semibold flex items-center justify-center gap-2 shadow-soft disabled:opacity-70"
       >
-        <MessageCircle className="w-5 h-5" />
-        BOOK VIA WHATSAPP
+        <MessageCircle size={18} />
+        Send Booking Request via WhatsApp
       </button>
 
-      {/* Payment Proof Button (Separate flow visually) */}
-      <div className="mt-12 pt-8 border-t border-brand-border text-center">
-        <h3 className="font-playfair font-bold text-xl text-brand-black mb-2">Already paid your deposit?</h3>
-        <p className="text-brand-muted text-sm font-inter mb-6">
-          If you have already contacted us and made your deposit, send us your payment screenshot.
+      <div className="mt-12 pt-8 border-t border-black/10 text-center">
+        <h3 className="font-serif text-xl text-ink mb-2">Already paid your deposit?</h3>
+        <p className="text-ash text-sm mb-6">
+          If you have already made your ₦1,000 deposit, send your payment screenshot directly for confirmation.
         </p>
         <a
-          href={whatsappLink(BRAND.whatsapp, `Hello PY Luxe! 💕\n\nI have made my ₦1,000 booking deposit.\n\nName:\nService:\nPreferred Date:\nPreferred Time:\n\nI have attached my payment screenshot for verification.\n\nThank you!`)}
+          href={whatsappLink(BRAND.whatsapp, `Hello PY Luxe! 💕\n\nI have made my ₦1,000 booking deposit.\n\nI have attached my payment screenshot for verification.\n\nThank you!`)}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center justify-center gap-2 w-full sm:w-auto bg-brand-black text-white px-8 py-3 rounded-xl font-medium font-inter text-sm hover:bg-zinc-800 transition-colors"
+          className="inline-flex h-12 items-center justify-center gap-2 rounded-full border border-ink/20 px-8 text-[12px] uppercase tracking-[0.18em] text-ink hover:border-plum-500 hover:text-plum-600 font-medium"
         >
-          SEND PAYMENT PROOF ON WHATSAPP
+          Send Payment Proof on WhatsApp
         </a>
       </div>
     </form>
