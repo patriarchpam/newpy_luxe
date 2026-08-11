@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { MessageCircle, Clock, CheckCircle2, ChevronRight, ArrowLeft } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import { whatsappLink } from "@/lib/utils";
 import { BRAND, BOOKING_DEPOSIT } from "@/lib/constants";
 import { getAvailableSlots, createBooking } from "@/app/actions/booking";
@@ -21,7 +21,7 @@ type BookingFormData = {
 };
 
 // Animation variants for smooth step transitions
-const stepVariants = {
+const stepVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
   exit: { opacity: 0, y: -20, transition: { duration: 0.3, ease: "easeIn" } }

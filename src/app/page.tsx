@@ -3,19 +3,19 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Check, MessageCircle } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { BRAND, GALLERY } from "@/lib/constants";
 import { whatsappLink } from "@/lib/utils";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { FaqAccordion } from "@/components/ui/FaqAccordion";
 import { GalleryClient } from "@/app/gallery/GalleryClient";
 
-const fadeInUp = {
+const fadeInUp: Variants = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
 };
 
-const staggerContainer = {
+const staggerContainer: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
