@@ -95,6 +95,14 @@ export const SERVICES: Service[] = [
     image: "/images/makeup.png",
   },
   {
+    id: "makeup-eyebrow-carving",
+    category: "Makeup",
+    name: "Eyebrow Carving & Shaping",
+    description: "Precision eyebrow carving, trimming, and shaping for defined, gorgeous arches.",
+    price: "Price available on request",
+    image: "/images/eyebrows.png",
+  },
+  {
     id: "makeup-event-glam",
     category: "Makeup",
     name: "Event / Bridal Glam",
@@ -134,8 +142,11 @@ export type GalleryImage = {
 export const GALLERY: GalleryImage[] = [
   // Hair (generated)
   { id: "gal-hair-1", category: "Hair", src: "/images/hair.png", alt: "Elegant Hair Styling" },
-  // Makeup (generated)
+  // Makeup & Eyebrows
   { id: "gal-makeup-1", category: "Makeup", src: "/images/makeup.png", alt: "Flawless Soft Glam Makeup" },
+  { id: "gal-eyebrows-1", category: "Makeup", src: "/images/eyebrows.png", alt: "Expertly Carved & Shaped Eyebrows" },
+  { id: "gal-makeup-2", category: "Makeup", src: "/images/makeup/makeup-1.jpeg", alt: "Makeup & Eyebrow Styling 1" },
+  { id: "gal-makeup-3", category: "Makeup", src: "/images/makeup/makeup-2.jpeg", alt: "Makeup & Eyebrow Styling 2" },
   // Henna (real photos)
   { id: "gal-henna-1", category: "Henna", src: "/images/henna/henna-1.jpeg", alt: "Henna Design 1" },
   { id: "gal-henna-2", category: "Henna", src: "/images/henna/henna-2.jpeg", alt: "Henna Design 2" },
