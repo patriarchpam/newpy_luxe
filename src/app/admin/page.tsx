@@ -1,6 +1,8 @@
 import { getAdminBookings } from "@/app/actions/admin";
 import { format, isToday } from "date-fns";
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminDashboard() {
   const allBookings = await getAdminBookings();
 

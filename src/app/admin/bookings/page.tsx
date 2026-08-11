@@ -1,6 +1,8 @@
 import { getAdminBookings, getArchivedBookings, getAdminServices } from "@/app/actions/admin";
 import BookingsTable from "./BookingsTable";
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminBookingsPage() {
   const bookings = await getAdminBookings();
   const archivedBookings = await getArchivedBookings();

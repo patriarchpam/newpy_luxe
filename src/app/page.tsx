@@ -1,11 +1,29 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Check, MessageCircle } from "lucide-react";
+import { motion } from "framer-motion";
 import { BRAND, GALLERY } from "@/lib/constants";
 import { whatsappLink } from "@/lib/utils";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { FaqAccordion } from "@/components/ui/FaqAccordion";
 import { GalleryClient } from "@/app/gallery/GalleryClient";
+
+const fadeInUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
 
 export default function HomePage() {
   const serviceCategories = [
@@ -30,19 +48,19 @@ export default function HomePage() {
       {/* HERO */}
       <section className="relative overflow-hidden bg-noir">
         <div className="mx-auto grid w-full max-w-6xl items-center gap-10 px-5 pb-14 pt-14 sm:px-8 lg:grid-cols-2 lg:gap-14 lg:pb-24 lg:pt-20">
-          <div>
-            <p className="text-[11px] uppercase tracking-luxe text-plum-300">{BRAND.location}</p>
-            <h1 className="mt-4 font-serif text-6xl leading-[0.95] text-white sm:text-7xl lg:text-[86px]">
+          <motion.div variants={staggerContainer} initial="hidden" animate="visible">
+            <motion.p variants={fadeInUp} className="text-[11px] uppercase tracking-luxe text-plum-300">{BRAND.location}</motion.p>
+            <motion.h1 variants={fadeInUp} className="mt-4 font-serif text-6xl leading-[0.95] text-white sm:text-7xl lg:text-[86px]">
               PY <span className="italic text-plum-300">Luxe</span>
-            </h1>
-            <p className="mt-4 text-sm uppercase tracking-[0.3em] text-mist">{BRAND.tagline}</p>
-            <p className="mt-6 max-w-md text-[17px] leading-relaxed text-mist">{BRAND.description}</p>
+            </motion.h1>
+            <motion.p variants={fadeInUp} className="mt-4 text-sm uppercase tracking-[0.3em] text-mist">{BRAND.tagline}</motion.p>
+            <motion.p variants={fadeInUp} className="mt-6 max-w-md text-[17px] leading-relaxed text-mist">{BRAND.description}</motion.p>
 
-            <p className="mt-6 inline-flex flex-wrap items-center gap-x-2 rounded-full border border-white/15 px-4 py-2 text-[12px] text-cloud">
+            <motion.p variants={fadeInUp} className="mt-6 inline-flex flex-wrap items-center gap-x-2 rounded-full border border-white/15 px-4 py-2 text-[12px] text-cloud">
               Available at {BRAND.primary_service_location} <span className="text-plum-300">•</span> Home service available
-            </p>
+            </motion.p>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <motion.div variants={fadeInUp} className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
                 href="/booking"
                 className="inline-flex h-14 items-center justify-center rounded-full bg-plum-500 px-8 text-[12px] uppercase tracking-[0.2em] text-white transition-colors hover:bg-plum-400 font-semibold"
@@ -55,19 +73,25 @@ export default function HomePage() {
               >
                 View services
               </Link>
-            </div>
+            </motion.div>
 
-            <a
+            <motion.a
+              variants={fadeInUp}
               href={whatsappLink(BRAND.whatsapp, generalEnquiry)}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-5 inline-flex items-center gap-2 text-[13px] uppercase tracking-[0.18em] text-plum-200 hover:text-white"
             >
               <MessageCircle size={16} /> Chat with PY Luxe on WhatsApp
-            </a>
-          </div>
+            </motion.a>
+          </motion.div>
 
-          <div className="relative">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="relative"
+          >
             <div className="overflow-hidden rounded-[2rem] shadow-soft ring-1 ring-white/10 relative h-[420px] sm:h-[560px] w-full">
               <Image
                 src="/images/hero.png"
@@ -77,11 +101,16 @@ export default function HomePage() {
                 priority
               />
             </div>
-            <div className="pointer-events-none absolute -bottom-4 -left-4 hidden rounded-2xl bg-plum-500 px-6 py-4 text-white sm:block">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.5 }}
+              className="pointer-events-none absolute -bottom-4 -left-4 hidden rounded-2xl bg-plum-500 px-6 py-4 text-white sm:block"
+            >
               <p className="font-serif text-xl leading-none">Hair • Nails</p>
               <p className="font-serif text-xl leading-none">Makeup • Henna</p>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 
