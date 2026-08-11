@@ -2,13 +2,16 @@ import { BookingForm } from "./BookingForm";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { BOOKING_DEPOSIT } from "@/lib/constants";
 import { Info } from "lucide-react";
+import { getAdminServices } from "@/app/actions/admin";
 
 export const metadata = {
   title: "Book Appointment | PY Luxe — Hair, Nails, Makeup & Henna in Abuja",
   description: "Book your beauty appointment with PY Luxe in Abuja. A ₦1,000 deposit is required to secure every appointment.",
 };
 
-export default function BookingPage() {
+export default async function BookingPage() {
+  const services = await getAdminServices();
+
   return (
     <main>
       <section className="bg-noir px-5 py-14 text-center sm:px-8 sm:py-20">
@@ -40,7 +43,7 @@ export default function BookingPage() {
           </div>
 
           <div className="rounded-[2rem] border border-black/5 bg-cloud p-6 sm:p-10 shadow-soft">
-            <BookingForm />
+            <BookingForm initialServices={services || []} />
           </div>
         </div>
       </section>

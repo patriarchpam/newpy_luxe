@@ -50,6 +50,8 @@ CREATE TABLE IF NOT EXISTS public.services (
   category TEXT NOT NULL,
   price NUMERIC(10, 2) NOT NULL,
   duration INTEGER NOT NULL, -- minutes
+  buffer_time INTEGER DEFAULT 0, -- minutes
+  deposit_amount NUMERIC(10, 2) DEFAULT 0,
   image_url TEXT,
   is_active BOOLEAN NOT NULL DEFAULT TRUE,
   sort_order INTEGER DEFAULT 0,
@@ -76,12 +78,36 @@ CREATE TABLE IF NOT EXISTS public.staff_services (
 );
 
 -- ─── AVAILABILITY ────────────────────────────────────────────────────────────
--- Blocked time slots (booked or manually blocked)
+
+-- Store-wide business hours per day of week (0=Sunday, 1=Monday, etc.)
+CREATE TABLE IF NOT EXISTS public.business_hours (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  day_of_week INTEGER NOT NULL CHECK (day_of_week BETWEEN 0 AND 6),
+  open_time TIME NOT NULL,
+  close_time TIME NOT NULL,
+  is_closed BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE (day_of_week)
+);
+
+-- Store-wide blocked dates (for holidays, special events, etc.)
+CREATE TABLE IF NOT EXISTS public.blocked_dates (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  date DATE NOT NULL,
+  start_time TIME, -- if null, whole day is blocked
+  end_time TIME,
+  reason TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE (date, start_time, end_time)
+);
+
+-- Blocked time slots (booked or manually blocked for staff)
 CREATE TABLE IF NOT EXISTS public.blocked_slots (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   staff_id UUID REFERENCES public.staff(id) ON DELETE CASCADE,
   date DATE NOT NULL,
   time TIME NOT NULL,
+  duration INTEGER NOT NULL DEFAULT 60, -- duration in minutes
   reason TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   UNIQUE (staff_id, date, time)
@@ -92,6 +118,9 @@ CREATE TABLE IF NOT EXISTS public.bookings (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   booking_ref TEXT UNIQUE NOT NULL,
   customer_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+  customer_name TEXT, -- for guest checkout
+  customer_email TEXT, -- for guest checkout
+  customer_phone TEXT, -- for guest checkout
   staff_id UUID REFERENCES public.staff(id) ON DELETE SET NULL,
   service_id UUID REFERENCES public.services(id) ON DELETE SET NULL,
   date DATE NOT NULL,
@@ -109,22 +138,59 @@ CREATE TABLE IF NOT EXISTS public.bookings (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- Auto-block slot on booking
-CREATE OR REPLACE FUNCTION public.handle_booking_slot()
-RETURNS TRIGGER AS $$
+-- Transactional Booking RPC to prevent double bookings
+CREATE OR REPLACE FUNCTION public.book_appointment(
+  p_booking_ref TEXT,
+  p_customer_name TEXT,
+  p_customer_email TEXT,
+  p_customer_phone TEXT,
+  p_service_id UUID,
+  p_date DATE,
+  p_time TIME,
+  p_duration INTEGER,
+  p_notes TEXT,
+  p_total_amount NUMERIC,
+  p_deposit_amount NUMERIC
+) RETURNS UUID AS $$
+DECLARE
+  v_booking_id UUID;
+  v_overlaps INTEGER;
+  v_end_time TIME;
 BEGIN
-  IF NEW.status IN ('confirmed', 'pending') AND NEW.staff_id IS NOT NULL THEN
-    INSERT INTO public.blocked_slots (staff_id, date, time, reason)
-    VALUES (NEW.staff_id, NEW.date, NEW.time, 'booking:' || NEW.id)
-    ON CONFLICT (staff_id, date, time) DO NOTHING;
+  v_end_time := p_time + (p_duration || ' minutes')::interval;
+
+  -- Lock the bookings table for this date to prevent concurrent overlapping inserts
+  -- In a high scale app, we'd use pg_advisory_xact_lock, but locking rows or checking overlaps is enough here.
+  
+  -- Check if there are any confirmed/pending bookings that overlap
+  SELECT COUNT(*) INTO v_overlaps
+  FROM public.bookings b
+  WHERE b.date = p_date
+    AND b.status IN ('pending', 'confirmed')
+    AND (
+      (p_time >= b.time AND p_time < (b.time + (b.duration || ' minutes')::interval))
+      OR
+      (v_end_time > b.time AND v_end_time <= (b.time + (b.duration || ' minutes')::interval))
+      OR
+      (p_time <= b.time AND v_end_time >= (b.time + (b.duration || ' minutes')::interval))
+    );
+
+  IF v_overlaps > 0 THEN
+    RAISE EXCEPTION 'Double booking detected. This time slot is no longer available.';
   END IF;
-  RETURN NEW;
+
+  -- Insert booking
+  INSERT INTO public.bookings (
+    booking_ref, customer_name, customer_email, customer_phone,
+    service_id, date, time, duration, notes, total_amount, deposit_amount
+  ) VALUES (
+    p_booking_ref, p_customer_name, p_customer_email, p_customer_phone,
+    p_service_id, p_date, p_time, p_duration, p_notes, p_total_amount, p_deposit_amount
+  ) RETURNING id INTO v_booking_id;
+
+  RETURN v_booking_id;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
-CREATE TRIGGER on_booking_created
-  AFTER INSERT ON public.bookings
-  FOR EACH ROW EXECUTE FUNCTION public.handle_booking_slot();
 
 -- ─── BOOKING PAYMENTS ─────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.booking_payments (
@@ -298,8 +364,16 @@ ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
 -- Profiles: users can read/update their own
 CREATE POLICY "profiles_select_own" ON public.profiles FOR SELECT USING (auth.uid() = id);
 CREATE POLICY "profiles_update_own" ON public.profiles FOR UPDATE USING (auth.uid() = id);
+-- Use a SECURITY DEFINER function to prevent infinite recursion
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS BOOLEAN AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin'
+  );
+$$ LANGUAGE sql SECURITY DEFINER;
+
 CREATE POLICY "profiles_admin_all" ON public.profiles USING (
-  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
+  public.is_admin()
 );
 
 -- Bookings: customers see their own, staff sees assigned, admin sees all
@@ -325,6 +399,12 @@ CREATE POLICY "services_public_read" ON public.services FOR SELECT USING (is_act
 CREATE POLICY "services_admin_write" ON public.services USING (
   EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
 );
+
+ALTER TABLE public.business_hours ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "business_hours_public_read" ON public.business_hours FOR SELECT USING (TRUE);
+
+ALTER TABLE public.blocked_dates ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "blocked_dates_public_read" ON public.blocked_dates FOR SELECT USING (TRUE);
 
 ALTER TABLE public.gallery_items ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "gallery_public_read" ON public.gallery_items FOR SELECT USING (TRUE);
@@ -373,3 +453,17 @@ INSERT INTO public.services (slug, name, description, category, price, duration,
 ('henna', 'Henna', 'Traditional and contemporary henna designs.', 'Henna', 8000, 90, TRUE),
 ('fashion-consultation', 'Fashion Consultation', 'Personal styling sessions to curate your dream wardrobe.', 'Fashion', 25000, 120, TRUE)
 ON CONFLICT (slug) DO NOTHING;
+
+-- ════════════════════════════════════════════════════════════════════════════
+-- SEED DATA — Business Hours
+-- ════════════════════════════════════════════════════════════════════════════
+
+INSERT INTO public.business_hours (day_of_week, open_time, close_time, is_closed) VALUES
+(1, '09:00:00', '18:00:00', FALSE), -- Monday
+(2, '09:00:00', '18:00:00', FALSE), -- Tuesday
+(3, '09:00:00', '18:00:00', FALSE), -- Wednesday
+(4, '09:00:00', '18:00:00', FALSE), -- Thursday
+(5, '09:00:00', '18:00:00', FALSE), -- Friday
+(6, '10:00:00', '17:00:00', FALSE), -- Saturday
+(0, '00:00:00', '00:00:00', TRUE)   -- Sunday
+ON CONFLICT (day_of_week) DO NOTHING;

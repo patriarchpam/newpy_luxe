@@ -1,175 +1,285 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { MessageCircle } from "lucide-react";
-import { SERVICES, BRAND } from "@/lib/constants";
+import { MessageCircle, Clock, CheckCircle2, ChevronRight, ArrowLeft } from "lucide-react";
 import { whatsappLink } from "@/lib/utils";
+import { BRAND, BOOKING_DEPOSIT } from "@/lib/constants";
+import { getAvailableSlots, createBooking } from "@/app/actions/booking";
+
+import { ServiceDB } from "@/lib/types";
 
 type BookingFormData = {
   fullName: string;
+  email: string;
   phone: string;
-  service: string;
+  serviceId: string;
   date: string;
   time: string;
-  location: string;
   message: string;
 };
 
-export function BookingForm() {
-  const { register, handleSubmit, formState: { errors } } = useForm<BookingFormData>();
+export function BookingForm({ initialServices }: { initialServices: ServiceDB[] }) {
+  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<BookingFormData>();
+  
+  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
+  const [availableSlots, setAvailableSlots] = useState<string[]>([]);
+  const [isLoadingSlots, setIsLoadingSlots] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [bookingResult, setBookingResult] = useState<{ ref?: string; error?: string } | null>(null);
 
-  const onSubmit = (data: BookingFormData) => {
+  const selectedServiceId = watch("serviceId");
+  const selectedDate = watch("date");
+  const selectedTime = watch("time");
+
+  const selectedService = initialServices.find(s => s.id === selectedServiceId);
+
+  // Fetch availability when date changes
+  useEffect(() => {
+    async function fetchSlots() {
+      if (selectedServiceId && selectedDate) {
+        setIsLoadingSlots(true);
+        setValue("time", ""); // Reset time
+        try {
+          const slots = await getAvailableSlots(selectedDate, selectedServiceId);
+          setAvailableSlots(slots);
+        } catch (error) {
+          console.error(error);
+          setAvailableSlots([]);
+        } finally {
+          setIsLoadingSlots(false);
+        }
+      }
+    }
+    fetchSlots();
+  }, [selectedDate, selectedServiceId, setValue]);
+
+  const onSubmit = async (data: BookingFormData) => {
     setIsSubmitting(true);
-    
-    const selectedService = SERVICES.find(s => s.id === data.service)?.name || data.service;
+    setBookingResult(null);
 
-    const message = `Hello PY Luxe! 💕
+    const result = await createBooking({
+      serviceId: data.serviceId,
+      date: data.date,
+      time: data.time,
+      customerName: data.fullName,
+      customerEmail: data.email,
+      customerPhone: data.phone,
+      notes: data.message,
+    });
 
-I would like to book an appointment.
-
-Name: ${data.fullName}
-Phone: ${data.phone}
-Service: ${selectedService}
-Preferred Date: ${data.date}
-Preferred Time: ${data.time}
-Location: ${data.location}
-
-I understand that a ₦1,000 deposit is required to secure my appointment.
-
-Additional Message: ${data.message || "None"}
-
-Thank you!`;
-
-    const url = whatsappLink(BRAND.whatsapp, message);
-    window.open(url, "_blank");
-    
-    setIsSubmitting(false);
+    if (result.error) {
+      setBookingResult({ error: result.error });
+      setIsSubmitting(false);
+    } else {
+      setBookingResult({ ref: result.bookingRef });
+      setStep(4);
+      setIsSubmitting(false);
+    }
   };
 
   const inputClasses = "w-full rounded-2xl border border-black/10 bg-white px-4 py-3.5 text-sm text-ink outline-none transition-colors focus:border-plum-500 font-sans";
   const labelClasses = "block text-xs uppercase tracking-[0.16em] text-ash mb-2 font-medium";
 
-  return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <label htmlFor="fullName" className={labelClasses}>Full Name *</label>
-          <input
-            id="fullName"
-            type="text"
-            placeholder="Your name"
-            className={inputClasses}
-            {...register("fullName", { required: "Name is required" })}
-          />
-          {errors.fullName && <p className="text-red-500 text-xs mt-1.5">{errors.fullName.message}</p>}
-        </div>
-
-        <div>
-          <label htmlFor="phone" className={labelClasses}>Phone Number *</label>
-          <input
-            id="phone"
-            type="tel"
-            placeholder="070 0000 0000"
-            className={inputClasses}
-            {...register("phone", { required: "Phone number is required" })}
-          />
-          {errors.phone && <p className="text-red-500 text-xs mt-1.5">{errors.phone.message}</p>}
-        </div>
-      </div>
-
-      <div>
-        <label htmlFor="service" className={labelClasses}>Select Service *</label>
-        <select
-          id="service"
-          className={inputClasses}
-          {...register("service", { required: "Please select a service" })}
-          defaultValue=""
-        >
-          <option value="" disabled>Choose a service</option>
-          {SERVICES.map((s) => (
-            <option key={s.id} value={s.id}>{s.name} - {s.price}</option>
+  // --- STEP 1: SERVICE SELECTION ---
+  if (step === 1) {
+    return (
+      <div className="space-y-6">
+        <h3 className="text-xl font-serif text-ink mb-4">Step 1: Select a Service</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {initialServices.filter(s => s.is_active).map(service => (
+            <label
+              key={service.id}
+              className={`cursor-pointer rounded-2xl border-2 p-4 transition-all ${selectedServiceId === service.id ? 'border-plum-500 bg-plum-50' : 'border-transparent bg-white shadow-sm hover:shadow-md'}`}
+            >
+              <input 
+                type="radio" 
+                value={service.id} 
+                className="hidden" 
+                {...register("serviceId", { required: true })} 
+              />
+              <div className="flex justify-between items-start mb-2">
+                <span className="font-semibold text-ink">{service.name}</span>
+                <span className="text-plum-600 font-medium text-xs">Price varies</span>
+              </div>
+              <p className="text-xs text-ash mb-3">{service.description}</p>
+              <div className="flex items-center gap-4 text-xs text-ink/70">
+                <span className="flex items-center gap-1"><Clock size={14}/> {service.duration} mins</span>
+                <span className="font-medium text-plum-600">Deposit: {BOOKING_DEPOSIT}</span>
+              </div>
+            </label>
           ))}
-        </select>
-        {errors.service && <p className="text-red-500 text-xs mt-1.5">{errors.service.message}</p>}
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <label htmlFor="date" className={labelClasses}>Preferred Date *</label>
-          <input
-            id="date"
-            type="date"
-            min={new Date().toISOString().split("T")[0]}
-            className={inputClasses}
-            {...register("date", { required: "Date is required" })}
-          />
-          {errors.date && <p className="text-red-500 text-xs mt-1.5">{errors.date.message}</p>}
         </div>
-
-        <div>
-          <label htmlFor="time" className={labelClasses}>Preferred Time *</label>
-          <input
-            id="time"
-            type="time"
-            className={inputClasses}
-            {...register("time", { required: "Time is required" })}
-          />
-          {errors.time && <p className="text-red-500 text-xs mt-1.5">{errors.time.message}</p>}
+        <div className="flex justify-end mt-8">
+          <button 
+            type="button"
+            disabled={!selectedServiceId}
+            onClick={() => setStep(2)}
+            className="h-12 rounded-full bg-ink px-8 text-xs uppercase tracking-[0.2em] text-white hover:bg-black transition-colors font-semibold flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Next <ChevronRight size={16} />
+          </button>
         </div>
       </div>
+    );
+  }
 
-      <div>
-        <label htmlFor="location" className={labelClasses}>Location *</label>
-        <select
-          id="location"
-          className={inputClasses}
-          {...register("location", { required: "Please select a location" })}
-          defaultValue=""
+  // --- STEP 2: DATE & TIME ---
+  if (step === 2) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center gap-2 mb-6">
+          <button onClick={() => setStep(1)} className="text-ash hover:text-ink"><ArrowLeft size={20}/></button>
+          <h3 className="text-xl font-serif text-ink">Step 2: Date & Time</h3>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div>
+            <label htmlFor="date" className={labelClasses}>Select Date</label>
+            <input
+              id="date"
+              type="date"
+              min={new Date().toISOString().split("T")[0]}
+              className={inputClasses}
+              {...register("date", { required: true })}
+            />
+          </div>
+
+          <div>
+            <label className={labelClasses}>Available Times</label>
+            {!selectedDate ? (
+              <p className="text-sm text-ash py-4">Please select a date first.</p>
+            ) : isLoadingSlots ? (
+              <p className="text-sm text-ash py-4 animate-pulse">Checking availability...</p>
+            ) : availableSlots.length === 0 ? (
+              <p className="text-sm text-red-500 py-4">No available slots on this date.</p>
+            ) : (
+              <div className="grid grid-cols-3 gap-2">
+                {availableSlots.map(slot => (
+                  <label 
+                    key={slot}
+                    className={`cursor-pointer rounded-xl border p-3 text-center text-sm font-medium transition-colors ${selectedTime === slot ? 'border-plum-500 bg-plum-50 text-plum-700' : 'border-black/10 bg-white hover:border-plum-300'}`}
+                  >
+                    <input type="radio" value={slot} className="hidden" {...register("time", { required: true })} />
+                    {slot}
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="flex justify-end mt-8">
+          <button 
+            type="button"
+            disabled={!selectedDate || !selectedTime}
+            onClick={() => setStep(3)}
+            className="h-12 rounded-full bg-ink px-8 text-xs uppercase tracking-[0.2em] text-white hover:bg-black transition-colors font-semibold flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Next <ChevronRight size={16} />
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // --- STEP 3: CUSTOMER DETAILS ---
+  if (step === 3) {
+    return (
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <div className="flex items-center gap-2 mb-6">
+          <button type="button" onClick={() => setStep(2)} className="text-ash hover:text-ink"><ArrowLeft size={20}/></button>
+          <h3 className="text-xl font-serif text-ink">Step 3: Your Details</h3>
+        </div>
+
+        {bookingResult?.error && (
+          <div className="p-4 rounded-xl bg-red-50 text-red-600 text-sm mb-6 border border-red-100">
+            {bookingResult.error}
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label htmlFor="fullName" className={labelClasses}>Full Name *</label>
+            <input id="fullName" type="text" className={inputClasses} {...register("fullName", { required: "Name is required" })} />
+            {errors.fullName && <p className="text-red-500 text-xs mt-1">{errors.fullName.message}</p>}
+          </div>
+          <div>
+            <label htmlFor="phone" className={labelClasses}>Phone Number *</label>
+            <input id="phone" type="tel" className={inputClasses} {...register("phone", { required: "Phone is required" })} />
+            {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone.message}</p>}
+          </div>
+          <div className="md:col-span-2">
+            <label htmlFor="email" className={labelClasses}>Email Address *</label>
+            <input id="email" type="email" className={inputClasses} {...register("email", { required: "Email is required" })} />
+            {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+          </div>
+          <div className="md:col-span-2">
+            <label htmlFor="message" className={labelClasses}>Additional Notes (Optional)</label>
+            <textarea id="message" rows={3} className={inputClasses} {...register("message")} />
+          </div>
+        </div>
+
+        <div className="p-6 rounded-2xl bg-white border border-black/5 shadow-sm mt-8">
+          <h4 className="font-serif text-lg mb-4">Booking Summary</h4>
+          <div className="space-y-2 text-sm">
+            <div className="flex justify-between"><span className="text-ash">Service:</span> <span className="font-medium">{selectedService?.name}</span></div>
+            <div className="flex justify-between"><span className="text-ash">Date:</span> <span className="font-medium">{selectedDate}</span></div>
+            <div className="flex justify-between"><span className="text-ash">Time:</span> <span className="font-medium">{selectedTime}</span></div>
+            <div className="flex justify-between"><span className="text-ash">Duration:</span> <span className="font-medium">{selectedService?.duration} mins</span></div>
+            <div className="pt-4 mt-4 border-t border-black/5 flex justify-between text-base">
+              <span className="font-semibold">Total Price:</span> <span className="font-semibold text-sm">Varies by service</span>
+            </div>
+            <div className="flex justify-between text-plum-600 font-medium">
+              <span>Required Deposit:</span> <span>{BOOKING_DEPOSIT}</span>
+            </div>
+          </div>
+        </div>
+
+        <button 
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full h-14 mt-8 rounded-full bg-plum-500 px-8 text-xs uppercase tracking-[0.2em] text-white hover:bg-plum-400 transition-colors font-semibold flex items-center justify-center gap-2 disabled:opacity-70"
         >
-          <option value="" disabled>Choose location</option>
-          <option value={BRAND.primary_service_location}>{BRAND.primary_service_location}</option>
-          <option value="Home Service">Home Service</option>
-        </select>
-        {errors.location && <p className="text-red-500 text-xs mt-1.5">{errors.location.message}</p>}
-      </div>
+          {isSubmitting ? "Confirming..." : "Confirm Booking"}
+        </button>
+      </form>
+    );
+  }
 
-      <div>
-        <label htmlFor="message" className={labelClasses}>Additional Message (Optional)</label>
-        <textarea
-          id="message"
-          rows={4}
-          placeholder="Any special requests or details..."
-          className={inputClasses}
-          {...register("message")}
-        />
-      </div>
+  // --- STEP 4: SUCCESS / CONFIRMATION ---
+  if (step === 4) {
+    const message = `Hello PY Luxe! 💕\n\nI have just booked an appointment and would like to make my deposit.\n\nBooking Ref: ${bookingResult?.ref}\nService: ${selectedService?.name}\nDate: ${selectedDate}\nTime: ${selectedTime}\n\nThank you!`;
+    const url = whatsappLink(BRAND.whatsapp, message);
 
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="w-full h-14 rounded-full bg-plum-500 px-8 text-[12px] uppercase tracking-[0.2em] text-white hover:bg-plum-400 transition-colors font-semibold flex items-center justify-center gap-2 shadow-soft disabled:opacity-70"
-      >
-        <MessageCircle size={18} />
-        Send Booking Request via WhatsApp
-      </button>
+    return (
+      <div className="text-center py-8 space-y-6">
+        <div className="mx-auto w-16 h-16 bg-green-100 text-green-500 rounded-full flex items-center justify-center mb-6">
+          <CheckCircle2 size={32} />
+        </div>
+        <h3 className="text-3xl font-serif text-ink">Booking Confirmed!</h3>
+        <p className="text-ash">Your appointment has been successfully reserved.</p>
+        
+        <div className="inline-block p-4 rounded-xl bg-white border border-black/10 shadow-sm mt-4 mb-8">
+          <p className="text-xs uppercase tracking-widest text-ash mb-1">Reference Number</p>
+          <p className="text-2xl font-mono font-bold text-plum-600">{bookingResult?.ref}</p>
+        </div>
 
-      <div className="mt-12 pt-8 border-t border-black/10 text-center">
-        <h3 className="font-serif text-xl text-ink mb-2">Already paid your deposit?</h3>
-        <p className="text-ash text-sm mb-6">
-          If you have already made your ₦1,000 deposit, send your payment screenshot directly for confirmation.
+        <p className="text-sm text-ink max-w-md mx-auto mb-8">
+          To finalize your booking, a deposit of <strong>{BOOKING_DEPOSIT}</strong> is required. Please tap below to message us on WhatsApp for payment instructions.
         </p>
-        <a
-          href={whatsappLink(BRAND.whatsapp, `Hello PY Luxe! 💕\n\nI have made my ₦1,000 booking deposit.\n\nI have attached my payment screenshot for verification.\n\nThank you!`)}
+
+        <a 
+          href={url}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex h-12 items-center justify-center gap-2 rounded-full border border-ink/20 px-8 text-[12px] uppercase tracking-[0.18em] text-ink hover:border-plum-500 hover:text-plum-600 font-medium"
+          className="inline-flex h-14 rounded-full bg-[#25D366] px-8 text-xs uppercase tracking-[0.2em] text-white hover:bg-[#20bd5a] transition-colors font-semibold items-center justify-center gap-2"
         >
-          Send Payment Proof on WhatsApp
+          <MessageCircle size={18} /> Complete Deposit via WhatsApp
         </a>
       </div>
-    </form>
-  );
+    );
+  }
+
+  return null;
 }

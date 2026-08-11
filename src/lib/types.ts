@@ -38,6 +38,8 @@ export interface ServiceDB {
   category: string;
   price: number;
   duration: number;
+  buffer_time: number;
+  deposit_amount: number;
   image_url?: string;
   is_active: boolean;
   created_at: string;
@@ -62,7 +64,10 @@ export interface StaffMember {
 export interface Booking {
   id: string;
   booking_ref: string;
-  customer_id: string;
+  customer_id?: string;
+  customer_name?: string;
+  customer_email?: string;
+  customer_phone?: string;
   staff_id?: string;
   service_id: string;
   date: string;
@@ -245,6 +250,26 @@ export interface AnalyticsSummary {
   revenue_change: number;
   bookings_change: number;
   customers_change: number;
+}
+
+// ─── Availability ─────────────────────────────────────────────────────────────
+
+export interface BusinessHours {
+  id: string;
+  day_of_week: number;
+  open_time: string;
+  close_time: string;
+  is_closed: boolean;
+  created_at: string;
+}
+
+export interface BlockedDate {
+  id: string;
+  date: string;
+  start_time?: string;
+  end_time?: string;
+  reason?: string;
+  created_at: string;
 }
 
 // ─── Form Types ───────────────────────────────────────────────────────────────
