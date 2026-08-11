@@ -7,6 +7,7 @@ import { motion, Variants } from "framer-motion";
 import { BRAND, GALLERY } from "@/lib/constants";
 import { whatsappLink } from "@/lib/utils";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { HeroSlideshow } from "@/components/ui/HeroSlideshow";
 import { FaqAccordion } from "@/components/ui/FaqAccordion";
 import { GalleryClient } from "@/app/gallery/GalleryClient";
 
@@ -92,20 +93,12 @@ export default function HomePage() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="relative"
           >
-            <div className="overflow-hidden rounded-[2rem] shadow-soft ring-1 ring-white/10 relative h-[420px] sm:h-[560px] w-full">
-              <Image
-                src="/images/hero.png"
-                alt="PY Luxe beauty look — braided hair, soft glam makeup and manicured nails"
-                fill
-                className="object-cover"
-                priority
-              />
-            </div>
+            <HeroSlideshow />
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6, duration: 0.5 }}
-              className="pointer-events-none absolute -bottom-4 -left-4 hidden rounded-2xl bg-plum-500 px-6 py-4 text-white sm:block"
+              className="pointer-events-none absolute -bottom-4 -left-4 hidden rounded-2xl bg-plum-500 px-6 py-4 text-white sm:block z-10"
             >
               <p className="font-serif text-xl leading-none">Hair • Nails</p>
               <p className="font-serif text-xl leading-none">Makeup • Henna</p>
