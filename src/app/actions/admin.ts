@@ -27,7 +27,19 @@ export async function adminCreateService(data: Record<string, unknown>) {
 export async function getAdminBookings() {
   const { data, error } = await adminSupabase
     .from("bookings")
-    .select("*, service:services(name)")
+    .select(`*, service:services(*), customer:profiles!customer_id(*)`)
+    .eq("is_deleted", false)
+    .order("date", { ascending: false })
+    .order("time", { ascending: true });
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function getArchivedBookings() {
+  const { data, error } = await adminSupabase
+    .from("bookings")
+    .select(`*, service:services(*), customer:profiles!customer_id(*)`)
+    .eq("is_deleted", true)
     .order("date", { ascending: false })
     .order("time", { ascending: true });
   if (error) throw new Error(error.message);
@@ -81,7 +93,13 @@ export async function adminUpdateBooking(id: string, updates: Record<string, unk
 }
 
 export async function adminDeleteBooking(id: string) {
-  const { error } = await adminSupabase.from("bookings").delete().eq("id", id);
+  const { error } = await adminSupabase.from("bookings").update({ is_deleted: true }).eq("id", id);
+  if (error) return { error: error.message };
+  return { success: true };
+}
+
+export async function adminRecoverBooking(id: string) {
+  const { error } = await adminSupabase.from("bookings").update({ is_deleted: false }).eq("id", id);
   if (error) return { error: error.message };
   return { success: true };
 }

@@ -134,6 +134,7 @@ CREATE TABLE IF NOT EXISTS public.bookings (
     CHECK (payment_status IN ('pending', 'deposit_paid', 'fully_paid', 'refunded')),
   total_amount NUMERIC(10, 2) NOT NULL,
   deposit_amount NUMERIC(10, 2) NOT NULL,
+  is_deleted BOOLEAN NOT NULL DEFAULT false,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
