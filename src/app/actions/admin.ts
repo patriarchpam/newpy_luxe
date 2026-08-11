@@ -16,6 +16,12 @@ export async function updateService(id: string, updates: Record<string, unknown>
   return { success: true };
 }
 
+export async function adminCreateService(data: Record<string, unknown>) {
+  const { error } = await adminSupabase.from("services").insert([data]);
+  if (error) return { error: error.message };
+  return { success: true };
+}
+
 // ─── BOOKINGS ───────────────────────────────────────────────────────────────
 
 export async function getAdminBookings() {
