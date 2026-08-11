@@ -34,6 +34,52 @@ export async function updateBookingStatus(id: string, status: string) {
   return { success: true };
 }
 
+export async function adminCreateBooking(data: {
+  serviceId: string;
+  date: string;
+  time: string;
+  duration: number;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+  notes?: string;
+  deposit_amount: number;
+  total_amount: number;
+}) {
+  // Generate a short ref
+  const bookingRef = Math.random().toString(36).substring(2, 8).toUpperCase();
+  
+  const { error } = await adminSupabase.from("bookings").insert([{
+    service_id: data.serviceId,
+    customer_name: data.customerName,
+    customer_email: data.customerEmail,
+    customer_phone: data.customerPhone,
+    date: data.date,
+    time: data.time,
+    duration: data.duration,
+    status: "confirmed", // Admins usually confirm immediately
+    notes: data.notes || "",
+    booking_ref: bookingRef,
+    deposit_amount: data.deposit_amount,
+    total_amount: data.total_amount,
+  }]);
+
+  if (error) return { error: error.message };
+  return { success: true, bookingRef };
+}
+
+export async function adminUpdateBooking(id: string, updates: Record<string, unknown>) {
+  const { error } = await adminSupabase.from("bookings").update(updates).eq("id", id);
+  if (error) return { error: error.message };
+  return { success: true };
+}
+
+export async function adminDeleteBooking(id: string) {
+  const { error } = await adminSupabase.from("bookings").delete().eq("id", id);
+  if (error) return { error: error.message };
+  return { success: true };
+}
+
 // Rescheduling requires freeing the old slot and occupying a new one.
 // Because we calculate availability dynamically, we just need to update the date and time!
 export async function rescheduleBooking(id: string, newDate: string, newTime: string) {
